@@ -1,1 +1,903 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142B49">
+
+  <title>Control de Asistencia | CGR Quindío</title>
+
+  <link rel="manifest" href="./manifest.json">
+
+  <style>
+    :root {
+      --navy: #142B49;
+      --blue: #1E4976;
+      --green: #16845B;
+      --background: #F2F5FA;
+      --border: #DCE3ED;
+      --text: #26364B;
+      --muted: #68778B;
+      --white: #FFFFFF;
+      --danger: #B42318;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--background);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    header {
+      background: var(--navy);
+      color: white;
+      padding: 22px 18px;
+    }
+
+    .header-inner {
+      max-width: 1050px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border: 2px solid #FFFFFF80;
+      border-radius: 14px;
+      font-size: 23px;
+      font-weight: bold;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 19px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 13px;
+      color: #DCE8F5;
+    }
+
+    main {
+      width: min(100% - 28px, 1050px);
+      margin: 28px auto;
+    }
+
+    .notice {
+      padding: 14px 16px;
+      background: #E7EFF9;
+      border: 1px solid #C7D8EF;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 24px;
+      box-shadow: 0 5px 20px #142B490B;
+      min-width: 0;
+    }
+
+    .card h2 {
+      color: var(--navy);
+      font-size: 20px;
+      margin: 0 0 8px;
+    }
+
+    .description {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      margin: 0 0 22px;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 7px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    input, select {
+      display: block;
+      width: 100%;
+      min-height: 44px;
+      padding: 11px 12px;
+      border: 1px solid #CBD5E1;
+      border-radius: 8px;
+      background: white;
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    input:focus, select:focus {
+      outline: 2px solid #7BA8DE;
+      outline-offset: 1px;
+    }
+
+    button {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 16px;
+      margin-top: 17px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--navy);
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: var(--blue);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .secondary {
+      background: #E8EEF6;
+      color: var(--navy);
+    }
+
+    .secondary:hover {
+      background: #D9E4F1;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .message {
+      display: none;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .message.success {
+      display: block;
+      background: #E5F6ED;
+      color: #12643F;
+    }
+
+    .message.error {
+      display: block;
+      background: #FDECEA;
+      color: #912018;
+    }
+
+    .message.info {
+      display: block;
+      background: #E7EFF9;
+      color: #214D7C;
+    }
+
+    .dashboard {
+      margin-top: 20px;
+    }
+
+    .profile {
+      background: #F5F8FC;
+      border-radius: 10px;
+      padding: 16px;
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .history-wrap {
+      overflow-x: auto;
+      margin-top: 18px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 11px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--navy);
+      background: #F5F8FC;
+    }
+
+    footer {
+      max-width: 1050px;
+      margin: 35px auto 0;
+      padding: 20px 18px 30px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 720px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      main {
+        margin-top: 18px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      header h1 {
+        font-size: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="header-inner">
+    <div class="logo" aria-hidden="true">CGR</div>
+    <div>
+      <h1>Control de Asistencia</h1>
+      <p>Contraloría General de la República · Gerencia Quindío</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="notice">
+    <strong>Importante:</strong> el registro de entrada y salida requiere
+    conexión a Internet, ubicación habilitada y un dispositivo autorizado.
+    La asistencia se registra en el servidor institucional.
+  </div>
+
+  <section id="authSection" class="layout">
+    <article class="card">
+      <h2>Iniciar sesión</h2>
+      <p class="description">
+        Ingresa con tu cédula o con el usuario administrativo autorizado.
+      </p>
+
+      <form id="loginForm">
+        <label for="loginUsername">Cédula o usuario</label>
+        <input id="loginUsername" autocomplete="username"
+               required maxlength="100">
+
+        <label for="loginPassword">Contraseña</label>
+        <input id="loginPassword" type="password"
+               autocomplete="current-password" required>
+
+        <button id="loginButton" type="submit">
+          Ingresar al sistema
+        </button>
+      </form>
+
+      <div id="loginMessage" class="message" role="status"
+           aria-live="polite"></div>
+    </article>
+
+    <article class="card">
+      <h2>Registro de funcionario</h2>
+      <p class="description">
+        Registra tus datos para solicitar acceso. El administrador debe
+        aprobar la cuenta y asignar el horario antes de utilizar la asistencia.
+      </p>
+
+      <form id="registerForm">
+        <label for="regName">Nombre completo</label>
+        <input id="regName" autocomplete="name"
+               required minlength="5" maxlength="120">
+
+        <label for="regCedula">Número de cédula</label>
+        <input id="regCedula" inputmode="numeric"
+               autocomplete="off" required minlength="5" maxlength="20">
+
+        <label for="regCargo">Cargo</label>
+        <input id="regCargo" required minlength="2" maxlength="120">
+
+        <label for="regEmail">Correo institucional o autorizado</label>
+        <input id="regEmail" type="email"
+               autocomplete="email" required maxlength="150">
+
+        <label for="regPassword">Contraseña (mínimo 10 caracteres)</label>
+        <input id="regPassword" type="password"
+               autocomplete="new-password" required minlength="10">
+
+        <button id="registerButton" type="submit">
+          Enviar solicitud de registro
+        </button>
+      </form>
+
+      <div id="registerMessage" class="message" role="status"
+           aria-live="polite"></div>
+    </article>
+  </section>
+
+  <section id="dashboardSection" class="card dashboard hidden">
+    <h2 id="welcomeTitle">Mi asistencia</h2>
+    <p class="description">
+      Verifica tus datos antes de registrar la entrada o la salida.
+    </p>
+
+    <div id="profile" class="profile"></div>
+
+    <div id="attendanceActions" class="actions">
+      <button id="entryButton" type="button">
+        Registrar entrada
+      </button>
+
+      <button id="exitButton" type="button">
+        Registrar salida
+      </button>
+    </div>
+
+    <button id="refreshButton" class="secondary" type="button">
+      Actualizar información
+    </button>
+
+    <div id="attendanceMessage" class="message" role="status"
+         aria-live="polite"></div>
+
+    <div id="historySection">
+      <h2 style="margin-top:28px">Historial de asistencia</h2>
+      <div class="history-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Entrada</th>
+              <th>Salida</th>
+              <th>Minutos compensables</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <button id="logoutButton" class="secondary" type="button">
+      Cerrar sesión
+    </button>
+  </section>
+
+  <section id="adminNotice" class="card hidden">
+    <h2>Sesión administrativa</h2>
+    <p class="description">
+      Has iniciado sesión como administrador. La administración completa
+      de funcionarios, horarios y solicitudes debe conectarse a las funciones
+      administrativas de tu backend.
+    </p>
+    <div id="adminMessage" class="message info">
+      Sesión administrativa activa.
+    </div>
+    <button id="logoutAdminButton" type="button">Cerrar sesión</button>
+  </section>
+</main>
+
+<footer>
+  Control de Asistencia CGR Quindío.<br>
+  Los registros oficiales se procesan mediante el servidor configurado.
+  Esta aplicación no registra asistencia sin confirmación del servidor.
+</footer>
+
+<script>
+"use strict";
+
+/*
+ * CONFIGURACIÓN:
+ * Esta página está diseñada para ejecutarse como archivo HTML
+ * de una aplicación web independiente.
+ *
+ * El backend original utiliza google.script.run, disponible dentro
+ * del entorno de Google Apps Script, pero no en GitHub Pages.
+ *
+ * Para utilizar GitHub Pages, se necesita una API HTTPS intermedia
+ * que autentique cada solicitud y llame al backend de forma segura.
+ *
+ * No introduzcas contraseñas administrativas ni secretos en este archivo.
+ */
+
+const CONFIG = {
+  APPS_SCRIPT_URL:
+    "https://script.google.com/macros/s/AKfycbyCBeVYszdy0RVjJuQohq7go-3pT1Fb8O0jxudwIWk4xEdRhUo0xFwTkQiadeYLCX-m/exec",
+
+  DEVICE_KEY: "cgr_device_id",
+  TOKEN_KEY: "cgr_session_token",
+  ROLE_KEY: "cgr_session_role",
+  NAME_KEY: "cgr_session_name"
+};
+
+const $ = (id) => document.getElementById(id);
+
+let sessionToken = null;
+let sessionRole = null;
+let deviceId = null;
+
+/*
+ * Identificador de instalación para vincular el dispositivo.
+ * No es una prueba criptográfica de identidad ni impide por sí solo
+ * la suplantación. La autorización real corresponde al servidor.
+ */
+function getDeviceId() {
+  let id = localStorage.getItem(CONFIG.DEVICE_KEY);
+
+  if (!id) {
+    if (window.crypto && crypto.randomUUID) {
+      id = crypto.randomUUID() + crypto.randomUUID();
+    } else {
+      id = generateRandomId();
+    }
+
+    localStorage.setItem(CONFIG.DEVICE_KEY, id);
+  }
+
+  return id;
+}
+
+function generateRandomId() {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+
+  return Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function showMessage(id, text, type = "info") {
+  const element = $(id);
+  element.textContent = text;
+  element.className = "message " + type;
+}
+
+function clearMessage(id) {
+  const element = $(id);
+  element.textContent = "";
+  element.className = "message";
+}
+
+function setBusy(button, busy, busyText) {
+  if (busy) {
+    button.dataset.originalText = button.textContent;
+    button.textContent = busyText || "Procesando...";
+    button.disabled = true;
+  } else {
+    button.textContent =
+      button.dataset.originalText || button.textContent;
+    button.disabled = false;
+  }
+}
+
+/*
+ * No se simulan respuestas exitosas.
+ * Sin una API compatible y segura, la página muestra un error explícito.
+ */
+async function apiCall(functionName, data) {
+  if (!CONFIG.APPS_SCRIPT_URL) {
+    throw new Error("Falta configurar la conexión con el servidor.");
+  }
+
+  /*
+   * El backend proporcionado utiliza google.script.run.
+   * No existe una llamada HTTP directa compatible con ese mecanismo.
+   */
+  if (typeof google !== "undefined" &&
+      google.script &&
+      google.script.run) {
+    return new Promise((resolve, reject) => {
+      let runner = google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler((error) => {
+          reject(new Error(error.message || "Error del servidor."));
+        });
+
+      if (typeof runner[functionName] !== "function") {
+        reject(new Error("La función solicitada no está disponible."));
+        return;
+      }
+
+      runner[functionName](data);
+    });
+  }
+
+  throw new Error(
+    "La interfaz está publicada fuera de Google Apps Script. " +
+    "Para mantener la seguridad del sistema, falta conectar una API " +
+    "HTTPS compatible con el backend. No se ha enviado ni registrado " +
+    "ninguna asistencia."
+  );
+}
+
+function saveSession(result) {
+  sessionToken = result.token;
+  sessionRole = result.role;
+
+  /*
+   * Para una versión de producción, conviene gestionar las sesiones
+   * mediante cookies seguras HttpOnly desde una API propia.
+   */
+  sessionStorage.setItem(CONFIG.TOKEN_KEY, result.token);
+  sessionStorage.setItem(CONFIG.ROLE_KEY, result.role);
+  sessionStorage.setItem(CONFIG.NAME_KEY, result.name || "");
+}
+
+function clearSession() {
+  sessionToken = null;
+  sessionRole = null;
+
+  sessionStorage.removeItem(CONFIG.TOKEN_KEY);
+  sessionStorage.removeItem(CONFIG.ROLE_KEY);
+  sessionStorage.removeItem(CONFIG.NAME_KEY);
+
+  showAuth();
+}
+
+function showAuth() {
+  $("authSection").classList.remove("hidden");
+  $("dashboardSection").classList.add("hidden");
+  $("adminNotice").classList.add("hidden");
+}
+
+function showUserDashboard() {
+  $("authSection").classList.add("hidden");
+  $("dashboardSection").classList.remove("hidden");
+  $("adminNotice").classList.add("hidden");
+}
+
+function showAdminDashboard() {
+  $("authSection").classList.add("hidden");
+  $("dashboardSection").classList.add("hidden");
+  $("adminNotice").classList.remove("hidden");
+}
+
+function validateRegistration(data) {
+  if (data.name.trim().length < 5) {
+    throw new Error("Escribe tu nombre completo.");
+  }
+
+  if (data.cedula.replace(/\D/g, "").length < 5) {
+    throw new Error("Verifica el número de cédula.");
+  }
+
+  if (data.cargo.trim().length < 2) {
+    throw new Error("Escribe tu cargo.");
+  }
+
+  if (data.password.length < 10) {
+    throw new Error("La contraseña debe tener al menos 10 caracteres.");
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+    throw new Error("Escribe un correo electrónico válido.");
+  }
+}
+
+$("registerForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const button = $("registerButton");
+
+  const data = {
+    name: $("regName").value.trim(),
+    cedula: $("regCedula").value.replace(/\D/g, ""),
+    cargo: $("regCargo").value.trim(),
+    email: $("regEmail").value.trim().toLowerCase(),
+    password: $("regPassword").value,
+    deviceId: deviceId
+  };
+
+  clearMessage("registerMessage");
+
+  try {
+    validateRegistration(data);
+    setBusy(button, true, "Enviando solicitud...");
+
+    const result = await apiCall("registerUser", data);
+
+    showMessage(
+      "registerMessage",
+      result.message || "Solicitud enviada.",
+      "success"
+    );
+
+    $("registerForm").reset();
+  } catch (error) {
+    showMessage("registerMessage", error.message, "error");
+  } finally {
+    setBusy(button, false);
+  }
+});
+
+$("loginForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const button = $("loginButton");
+
+  const data = {
+    username: $("loginUsername").value.trim(),
+    password: $("loginPassword").value,
+    deviceId: deviceId
+  };
+
+  clearMessage("loginMessage");
+
+  try {
+    setBusy(button, true, "Verificando credenciales...");
+
+    const result = await apiCall("login", data);
+
+    if (!result || !result.ok || !result.token) {
+      throw new Error("El servidor no confirmó el inicio de sesión.");
+    }
+
+    saveSession(result);
+
+    if (result.role === "ADMIN") {
+      showAdminDashboard();
+      return;
+    }
+
+    if (result.role !== "USER") {
+      clearSession();
+      throw new Error("El servidor devolvió un rol no permitido.");
+    }
+
+    showUserDashboard();
+    await loadDashboard();
+  } catch (error) {
+    showMessage("loginMessage", error.message, "error");
+  } finally {
+    setBusy(button, false);
+  }
+});
+
+async function loadDashboard() {
+  if (!sessionToken || sessionRole !== "USER") {
+    throw new Error("Inicia sesión como funcionario.");
+  }
+
+  const result = await apiCall("getMyDashboard", sessionToken, deviceId);
+
+  $("welcomeTitle").textContent =
+    "Bienvenido, " + (result.name || "funcionario");
+
+  $("profile").replaceChildren();
+
+  const rows = [
+    ["Nombre", result.name],
+    ["Cédula", result.cedula],
+    ["Cargo", result.cargo],
+    ["Horario", result.scheduleLabel || result.schedule || "Pendiente"]
+  ];
+
+  rows.forEach(([label, value]) => {
+    const line = document.createElement("div");
+    const strong = document.createElement("strong");
+    strong.textContent = label + ": ";
+    line.append(strong, document.createTextNode(value || "—"));
+    $("profile").appendChild(line);
+  });
+
+  const history = Array.isArray(result.history) ? result.history : [];
+  const today = result.today;
+
+  $("entryButton").disabled = Boolean(today);
+  $("exitButton").disabled = !today || Boolean(today.salida);
+
+  renderHistory(history);
+}
+
+function renderHistory(records) {
+  const tbody = $("historyBody");
+  tbody.replaceChildren();
+
+  records.forEach((record) => {
+    const tr = document.createElement("tr");
+
+    [
+      record.fecha,
+      record.entrada,
+      record.salida,
+      record.minutos,
+      record.estado
+    ].forEach((value) => {
+      const td = document.createElement("td");
+      td.textContent = value == null ? "" : String(value);
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+
+  if (records.length === 0) {
+    const tr = document.createElement("tr");
+    const td = document.createElement("td");
+    td.colSpan = 5;
+    td.textContent = "No hay registros de asistencia.";
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+  }
+}
+
+function getCurrentLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error("Este navegador no permite obtener la ubicación GPS."));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          accuracy: position.coords.accuracy
+        });
+      },
+      (error) => {
+        const messages = {
+          1: "Debes permitir el acceso a la ubicación.",
+          2: "No se pudo determinar tu ubicación. Intenta nuevamente.",
+          3: "La solicitud GPS tardó demasiado. Intenta nuevamente."
+        };
+
+        reject(new Error(messages[error.code] || "Error al obtener el GPS."));
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 0
+      }
+    );
+  });
+}
+
+async function registerAttendance(functionName, button) {
+  if (!sessionToken || sessionRole !== "USER") {
+    showMessage(
+      "attendanceMessage",
+      "Debes iniciar sesión como funcionario.",
+      "error"
+    );
+    return;
+  }
+
+  try {
+    setBusy(button, true, "Obteniendo ubicación...");
+
+    const location = await getCurrentLocation();
+
+    if (location.accuracy > 200) {
+      throw new Error(
+        "La precisión GPS es de " +
+        Math.round(location.accuracy) +
+        " metros. Se requiere una precisión de 200 metros o mejor."
+      );
+    }
+
+    setBusy(button, true, "Validando asistencia...");
+
+    const result = await apiCall(functionName, {
+      deviceId: deviceId,
+      location: location
+    }, sessionToken);
+
+    if (!result || !result.ok) {
+      throw new Error("El servidor no confirmó el registro.");
+    }
+
+    showMessage(
+      "attendanceMessage",
+      (result.message || "Registro confirmado.") +
+      (result.time ? " Hora: " + result.time : ""),
+      "success"
+    );
+
+    await loadDashboard();
+  } catch (error) {
+    showMessage("attendanceMessage", error.message, "error");
+  } finally {
+    setBusy(button, false);
+  }
+}
+
+$("entryButton").addEventListener("click", () => {
+  registerAttendance("markEntry", $("entryButton"));
+});
+
+$("exitButton").addEventListener("click", () => {
+  registerAttendance("markExit", $("exitButton"));
+});
+
+$("refreshButton").addEventListener("click", async () => {
+  try {
+    showMessage("attendanceMessage", "Actualizando información...", "info");
+    await loadDashboard();
+    showMessage("attendanceMessage", "Información actualizada.", "success");
+  } catch (error) {
+    showMessage("attendanceMessage", error.message, "error");
+  }
+});
+
+async function logout() {
+  try {
+    if (sessionToken) {
+      await apiCall("logout", sessionToken);
+    }
+  } catch (error) {
+    console.warn("No se pudo confirmar el cierre en el servidor.");
+  } finally {
+    clearSession();
+  }
+}
+
+$("logoutButton").addEventListener("click", logout);
+$("logoutAdminButton").addEventListener("click", logout);
+
+function initialize() {
+  deviceId = getDeviceId();
+
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    navigator.serviceWorker.register("./sw.js").catch((error) => {
+      console.error("Error al registrar Service Worker:", error);
+    });
+  }
+
+  /*
+   * No restauramos automáticamente tokens de una sesión anterior.
+   * La sesión debe validarse nuevamente en el servidor.
+   */
+  showAuth();
+}
+
+initialize();
+</script>
+</body>
+</html>
+
